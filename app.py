@@ -19,6 +19,7 @@ publications_df = None
 def load_data():
     """Load publications from CSV file"""
     global publications_df
+    import traceback
     try:
         data_path = os.path.join('data', 'SB_publication_PMC.csv')
         publications_df = pd.read_csv(data_path)
@@ -26,6 +27,7 @@ def load_data():
         return True
     except Exception as e:
         print(f"Error loading data: {e}")
+        traceback.print_exc()
         return False
 
 @app.route('/')

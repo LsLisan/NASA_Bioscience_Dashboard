@@ -1,0 +1,65 @@
+{% extends "base.html" %} {% block title %}Publication - {{ publication.Title }}{% endblock %} {% block content %}
+
+<div class="container mt-4">
+    <h2>{{ publication.Title }}</h2>
+
+    <p class="text-muted">
+        <i class="fas fa-link"></i>
+        <a href="{{ publication.Link }}" target="_blank">Original Publication</a>
+    </p>
+
+    <!-- Summary Section -->
+    <div id="summary-section" class="mb-4">
+        {% if analysis %}
+        <h4>AI Summary</h4>
+        <p>{{ analysis.summary }}</p>
+        {% else %}
+        <div class="text-center">
+            <button id="analyze-btn" class="btn btn-primary">
+                    <i class="fas fa-magic"></i> Generate Summary
+                </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Text Preview -->
+    {% if analysis %}
+    <h5>Extracted Preview</h5>
+    <pre style="background:#f8f9fa; padding:1rem; border-radius:6px; max-height:400px; overflow-y:auto;">
+{{ analysis.text_preview }}
+        </pre> {% endif %}
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const analyzeBtn = document.getElementById("analyze-btn");
+        if (analyzeBtn) {
+            analyzeBtn.addEventListener("click", async() => {
+                analyzeBtn.disabled = true;
+                analyzeBtn.innerHTML = "Processing...";
+
+                const res = await fetch(`/api/analyze/{{ pub_id }}`);
+                const data = await res.json();
+
+                if (data.error) {
+                    alert("Error: " + data.error);
+                    analyzeBtn.disabled = false;
+                    analyzeBtn.innerHTML = "Generate Summary";
+                    return;
+                }
+
+                // Replace section with summary
+                document.getElementById("summary-section").innerHTML = `
+                <h4>AI Summary</h4>
+                <p>${data.summary}</p>
+                <h5>Extracted Preview</h5>
+                <pre style="background:#f8f9fa; padding:1rem; border-radius:6px; max-height:400px; overflow-y:auto;">
+${data.text_preview}
+                </pre>
+            `;
+            });
+        }
+    });
+</script>
+
+{% endblock %}
