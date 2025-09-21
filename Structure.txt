@@ -1,0 +1,34 @@
+nasa_bioscience_explorer/
+│
+├── app.py                              # Main Flask application
+├── config.py                           # Configuration settings
+├── requirements.txt                    # Python dependencies
+│
+├── services/
+│   ├── search_service.py               # Search functionality
+│   ├── pdf_processor.py                # PDF download and text extraction
+│   └── ai_analyzer.py                  # AI summarization and analysis
+│
+├── data/
+│   ├── nasa_publications.csv           # Your processed dataset (Title, Link)
+│   ├── pdfs/                           # Downloaded PDFs storage
+│   └── cache/                          # Cached summaries and analysis
+│
+├── static/
+│   ├── css/
+│   │   ├── style.css                   # Main stylesheet
+│   │   └── publication.css             # Publication detail page styles
+│   │
+│   └── js/
+│       ├── search.js                   # Search functionality
+│       ├── publication.js              # Publication page interactions
+│       └── knowledge_graph.js          # Knowledge graph visualization
+│
+├── templates/
+│   ├── base.html                       # Base template
+│   ├── index.html                      # Search page
+│   ├── search_results.html             # Search results
+│   └── publication.html                # Publication detail page
+│
+└── utils/
+    └── helpers.py                      # Helper functions
