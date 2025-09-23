@@ -5,7 +5,7 @@ from pathlib import Path
 from PyPDF2 import PdfReader
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from services.ai_analyzer import AIAnalyzer
+from services.ai_analyzer import AIAnalyzer   # <-- import AIAnalyzer
 
 
 class PDFProcessor:
@@ -14,91 +14,127 @@ class PDFProcessor:
         self.cache_dir = Path(cache_dir)
         self.pdf_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.analyzer = AIAnalyzer()
-        self.headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/117.0 Safari/537.36"
+
+        # Initialize AI summarizer
+        self.ai_analyzer = AIAnalyzer(model_name="t5-small")
+
+    # -------------------------------
+    # PubMed Central (PMC) BioC API
+    # -------------------------------
+    def fetch_from_bioc_api(self, pub_id: str) -> dict:
+        url = f"https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/{pub_id}/unicode"
+        resp = requests.get(url, timeout=30)
+
+        if resp.status_code != 200:
+            raise RuntimeError(f"BioC API request failed for {pub_id}: {resp.status_code}")
+
+        data = resp.json()
+        passages = []
+        for doc in data.get("documents", []):
+            for passage in doc.get("passages", []):
+                text = passage.get("text")
+                if text:
+                    passages.append(text)
+
+        return {
+            "text": "\n".join(passages).strip(),
+            "meta": data
         }
 
-    def get_pdf_url(self, article_url: str) -> str:
-        """
-        Construct or scrape the correct PDF URL from an article page.
-        Handles direct /pdf links, relative paths, and full URLs.
-        """
-        # First, try the simple `/pdf` endpoint
-        candidate = article_url.rstrip("/") + "/pdf"
-        resp = requests.get(candidate, headers=self.headers, timeout=15)
-
-        if "pdf" in resp.headers.get("Content-Type", "").lower():
-            return candidate
-
-        # Otherwise scrape the article page
-        resp = requests.get(article_url, headers=self.headers, timeout=15)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, "html.parser")
-        link = soup.select_one('a[href*="pdf"]')
-
-        if not link:
-            raise ValueError(f"No PDF link found in article page: {article_url}")
-
-        raw_href = link["href"]
-
-        # urljoin fixes both relative and absolute hrefs
-        pdf_url = urljoin(article_url, raw_href)
-
-        return pdf_url
-
+    # -------------------------------
+    # PDF download + extract fallback
+    # -------------------------------
     def download_pdf(self, pub, pub_id):
-        """Download PDF from publication link."""
-        article_url = pub["Link"]
-        pdf_url = self.get_pdf_url(article_url)
+        base_url = pub["Link"].strip()
+        if not base_url.startswith("http"):
+            raise ValueError(f"Invalid publication link: {base_url}")
+
+        pdf_url = base_url.rstrip("/") + "/pdf/"
         pdf_path = self.pdf_dir / f"pub_{pub_id}.pdf"
 
         if pdf_path.exists():
             return pdf_path
 
-        response = requests.get(pdf_url, headers=self.headers, timeout=30)
-        response.raise_for_status()
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0 Safari/537.36"
+            ),
+            "Accept": "text/html,application/pdf",
+            "Referer": "https://pmc.ncbi.nlm.nih.gov/"
+        }
+
+        response = requests.get(pdf_url, headers=headers, timeout=30, allow_redirects=True)
+
+        if "application/pdf" in response.headers.get("Content-Type", ""):
+            with open(pdf_path, "wb") as f:
+                f.write(response.content)
+            return pdf_path
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        pdf_link = None
+        for a in soup.find_all("a", href=True):
+            if a["href"].endswith(".pdf"):
+                pdf_link = a["href"]
+                break
+
+        if not pdf_link:
+            raise RuntimeError(f"No PDF link found at {pdf_url}")
+
+        pdf_link = urljoin(pdf_url, pdf_link)
+        pdf_resp = requests.get(pdf_link, headers=headers, timeout=30, allow_redirects=True)
+        pdf_resp.raise_for_status()
 
         with open(pdf_path, "wb") as f:
-            f.write(response.content)
+            f.write(pdf_resp.content)
 
         return pdf_path
 
-    def extract_text(self, pdf_path):
-        """Extract text from PDF."""
-        text = ""
-        with open(pdf_path, "rb") as f:
-            reader = PdfReader(f)
-            for page in reader.pages:
-                try:
-                    text += page.extract_text() or ""
-                except Exception:
-                    continue
-        return text.strip()
+    def extract_text(self, pdf_path: Path) -> str:
+        if not pdf_path.exists():
+            raise FileNotFoundError(f"PDF not found: {pdf_path}")
 
+        reader = PdfReader(str(pdf_path))
+        text = []
+        for page in reader.pages:
+            text.append(page.extract_text() or "")
+        return "\n".join(text).strip()
+
+    # -------------------------------
+    # Main handler
+    # -------------------------------
     def process_publication(self, pub, pub_id):
-        """
-        Download, extract, analyze, and cache publication.
-        Returns dict with summary + preview.
-        """
         cache_file = self.cache_dir / f"pub_{pub_id}_analysis.json"
         if cache_file.exists():
             with open(cache_file, "r", encoding="utf-8") as f:
                 return json.load(f)
 
-        pdf_path = self.download_pdf(pub, pub_id)
-        text = self.extract_text(pdf_path)
+        text = ""
+        used_api = False
 
-        summary = self.analyzer.summarize(text)
+        if "pmc.ncbi.nlm.nih.gov" in pub["Link"].lower() or str(pub_id).startswith("PMC"):
+            try:
+                bioc_data = self.fetch_from_bioc_api(pub_id)
+                text = bioc_data["text"]
+                used_api = True
+            except Exception as e:
+                print(f"[WARN] BioC API failed: {e}. Falling back to PDF.")
+
+        if not text:
+            pdf_path = self.download_pdf(pub, pub_id)
+            text = self.extract_text(pdf_path)
+
+        # 🔥 Use AIAnalyzer instead of naive summary
+        summary = self.ai_analyzer.summarize(text)
 
         result = {
             "pub_id": pub_id,
             "title": pub["Title"],
             "link": pub["Link"],
+            "source": "BioC API" if used_api else "PDF",
             "summary": summary,
-            "text_preview": text[:2000]  # limit preview
+            "text_preview": text[:2000]
         }
 
         with open(cache_file, "w", encoding="utf-8") as f:

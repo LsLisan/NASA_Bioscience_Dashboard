@@ -4,18 +4,14 @@ import os
 import json
 from services.search_service import SearchService
 from services.pdf_processor import PDFProcessor
-from services.uploadpdf import UploadPDFService
 
-app = Flask(
-    __name__,
-    template_folder='templates',
-    static_folder='static'
-)
+app = Flask(__name__, 
+           template_folder='templates',
+           static_folder='static')
 
 # Initialize services
 search_service = SearchService()
 pdf_processor = PDFProcessor()
-upload_service = UploadPDFService()
 
 # Load publications data
 publications_df = None
@@ -34,12 +30,10 @@ def load_data():
         traceback.print_exc()
         return False
 
-
 @app.route('/')
 def index():
     """Home page with search interface"""
     return render_template('index.html')
-
 
 @app.route('/search')
 def search():
@@ -49,26 +43,21 @@ def search():
     per_page = int(request.args.get('per_page', 10))
     
     if not query:
-        return render_template(
-            'search_results.html', 
-            results=[], 
-            query="", 
-            total=0, 
-            page=1, 
-            total_pages=0
-        )
+        return render_template('search_results.html', 
+                             results=[], 
+                             query="", 
+                             total=0, 
+                             page=1, 
+                             total_pages=0)
     
     results = search_service.search(publications_df, query, page, per_page)
     
-    return render_template(
-        'search_results.html',
-        results=results['publications'],
-        query=query,
-        total=results['total'],
-        page=page,
-        total_pages=results['total_pages']
-    )
-
+    return render_template('search_results.html',
+                         results=results['publications'],
+                         query=query,
+                         total=results['total'],
+                         page=page,
+                         total_pages=results['total_pages'])
 
 @app.route('/publication/<int:pub_id>')
 def publication_detail(pub_id):
@@ -84,13 +73,10 @@ def publication_detail(pub_id):
         with open(cache_file, 'r') as f:
             analysis_data = json.load(f)
     
-    return render_template(
-        'publication.html',
-        publication=pub,
-        pub_id=pub_id,
-        analysis=analysis_data
-    )
-
+    return render_template('publication.html',
+                         publication=pub,
+                         pub_id=pub_id,
+                         analysis=analysis_data)
 
 @app.route('/api/analyze/<int:pub_id>')
 def analyze_publication(pub_id):
@@ -106,7 +92,6 @@ def analyze_publication(pub_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/api/search')
 def api_search():
     """API endpoint for search"""
@@ -119,27 +104,6 @@ def api_search():
     
     results = search_service.search(publications_df, query, page, per_page)
     return jsonify(results)
-
-
-@app.route('/api/upload_pdf', methods=['POST'])
-def upload_pdf():
-    """API endpoint for uploading and analyzing a PDF"""
-    try:
-        # Accept both "file" and "pdf_file" as field names
-        file_key = 'file' if 'file' in request.files else 'pdf_file' if 'pdf_file' in request.files else None
-        if not file_key:
-            return jsonify({"error": "No file part in request"}), 400
-
-        pdf_file = request.files[file_key]
-        if pdf_file.filename == "":
-            return jsonify({"error": "No selected file"}), 400
-
-        result = upload_service.handle_upload(pdf_file)
-        return jsonify(result)
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 
 if __name__ == '__main__':
     if load_data():

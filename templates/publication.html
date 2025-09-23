@@ -12,26 +12,35 @@
     <div id="summary-section" class="mb-4">
         {% if analysis %}
         <h4>AI Summary</h4>
-        <p>{{ analysis.summary }}</p>
-        {% else %}
-        <div class="text-center">
+        <div style="white-space: pre-line;">{{ analysis.summary }}</div>
+
+        <h5>Extracted Preview</h5>
+        <pre style="background:#f8f9fa; padding:1rem; border-radius:6px; max-height:400px; overflow-y:auto;">
+{{ analysis.text_preview }}
+        </pre> {% else %}
+        <div class="text-center mb-3">
             <button id="analyze-btn" class="btn btn-primary">
-                    <i class="fas fa-magic"></i> Generate Summary
-                </button>
+                <i class="fas fa-magic"></i> Generate Summary
+            </button>
         </div>
         {% endif %}
     </div>
 
-    <!-- Text Preview -->
-    {% if analysis %}
-    <h5>Extracted Preview</h5>
-    <pre style="background:#f8f9fa; padding:1rem; border-radius:6px; max-height:400px; overflow-y:auto;">
-{{ analysis.text_preview }}
-        </pre> {% endif %}
+    <!-- PDF Upload Section -->
+    <h4>Upload a PDF to Summarize</h4>
+    <form id="pdf-upload-form" enctype="multipart/form-data">
+        <div class="mb-3">
+            <input type="file" name="pdf_file" id="pdf-file" class="form-control" accept="application/pdf" required>
+        </div>
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-upload"></i> Upload & Summarize
+        </button>
+    </form>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Existing summary button (for cached publications)
         const analyzeBtn = document.getElementById("analyze-btn");
         if (analyzeBtn) {
             analyzeBtn.addEventListener("click", async() => {
@@ -48,10 +57,9 @@
                     return;
                 }
 
-                // Replace section with summary
                 document.getElementById("summary-section").innerHTML = `
                 <h4>AI Summary</h4>
-                <p>${data.summary}</p>
+                <div style="white-space: pre-line;">${data.summary}</div>
                 <h5>Extracted Preview</h5>
                 <pre style="background:#f8f9fa; padding:1rem; border-radius:6px; max-height:400px; overflow-y:auto;">
 ${data.text_preview}
@@ -59,6 +67,40 @@ ${data.text_preview}
             `;
             });
         }
+
+        // Handle PDF Upload
+        const pdfForm = document.getElementById("pdf-upload-form");
+        pdfForm.addEventListener("submit", async(e) => {
+            e.preventDefault();
+            const formData = new FormData(pdfForm);
+
+            const btn = pdfForm.querySelector("button");
+            btn.disabled = true;
+            btn.innerHTML = "Processing...";
+
+            const res = await fetch("/api/upload_pdf", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-upload"></i> Upload & Summarize';
+
+            if (data.error) {
+                alert("Error: " + data.error);
+                return;
+            }
+
+            document.getElementById("summary-section").innerHTML = `
+            <h4>AI Summary</h4>
+            <div style="white-space: pre-line;">${data.summary}</div>
+            <h5>Extracted Preview</h5>
+            <pre style="background:#f8f9fa; padding:1rem; border-radius:6px; max-height:400px; overflow-y:auto;">
+${data.text_preview}
+            </pre>
+        `;
+        });
     });
 </script>
 
