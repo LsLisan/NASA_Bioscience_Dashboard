@@ -2,6 +2,18 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import os
 import json
+import nltk
+
+# -------------------------
+# NLTK punkt setup
+# -------------------------
+NLTK_DATA_DIR = r'D:\nltk_data'  # change to any local folder you prefer
+nltk.data.path.append(NLTK_DATA_DIR)
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt', download_dir=NLTK_DATA_DIR)
+
 from services.search_service import SearchService
 from services.pdf_processor import PDFProcessor
 from services.uploadpdf import UploadPDFService
@@ -34,16 +46,15 @@ def load_data():
         traceback.print_exc()
         return False
 
-
+# -------------------------
+# Routes
+# -------------------------
 @app.route('/')
 def index():
-    """Home page with search interface"""
     return render_template('index.html')
-
 
 @app.route('/search')
 def search():
-    """Search publications"""
     query = request.args.get('q', '').strip()
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 10))
@@ -69,10 +80,8 @@ def search():
         total_pages=results['total_pages']
     )
 
-
 @app.route('/publication/<int:pub_id>')
 def publication_detail(pub_id):
-    """Publication detail page"""
     if publications_df is None or pub_id >= len(publications_df):
         return "Publication not found", 404
     
@@ -81,7 +90,7 @@ def publication_detail(pub_id):
     analysis_data = None
     
     if os.path.exists(cache_file):
-        with open(cache_file, 'r') as f:
+        with open(cache_file, 'r', encoding='utf-8') as f:
             analysis_data = json.load(f)
     
     return render_template(
@@ -91,10 +100,8 @@ def publication_detail(pub_id):
         analysis=analysis_data
     )
 
-
 @app.route('/api/analyze/<int:pub_id>')
 def analyze_publication(pub_id):
-    """API endpoint to analyze a publication"""
     if publications_df is None or pub_id >= len(publications_df):
         return jsonify({"error": "Publication not found"}), 404
     
@@ -106,10 +113,8 @@ def analyze_publication(pub_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/api/search')
 def api_search():
-    """API endpoint for search"""
     query = request.args.get('q', '').strip()
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 10))
@@ -120,12 +125,10 @@ def api_search():
     results = search_service.search(publications_df, query, page, per_page)
     return jsonify(results)
 
-
 @app.route('/api/upload_pdf', methods=['POST'])
 def upload_pdf():
-    """API endpoint for uploading and analyzing a PDF"""
+    """Handle PDF upload and AI analysis"""
     try:
-        # Accept both "file" and "pdf_file" as field names
         file_key = 'file' if 'file' in request.files else 'pdf_file' if 'pdf_file' in request.files else None
         if not file_key:
             return jsonify({"error": "No file part in request"}), 400
@@ -139,10 +142,19 @@ def upload_pdf():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
+# -------------------------
+# Main
+# -------------------------
 if __name__ == '__main__':
     if load_data():
+        print("Starting Flask app on http://127.0.0.1:5000")
         app.run(debug=True, port=5000)
     else:
         print("Failed to load data. Please check your CSV file.")

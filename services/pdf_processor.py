@@ -5,8 +5,7 @@ from pathlib import Path
 from PyPDF2 import PdfReader
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from services.ai_analyzer import AIAnalyzer   # <-- import AIAnalyzer
-
+from services.ai_analyzer import AIAnalyzer
 
 class PDFProcessor:
     def __init__(self, pdf_dir="data/pdfs", cache_dir="data/cache"):
@@ -125,7 +124,7 @@ class PDFProcessor:
             pdf_path = self.download_pdf(pub, pub_id)
             text = self.extract_text(pdf_path)
 
-        # 🔥 Use AIAnalyzer instead of naive summary
+        # 🔥 Use AIAnalyzer for summary
         summary = self.ai_analyzer.summarize(text)
 
         result = {
@@ -134,7 +133,7 @@ class PDFProcessor:
             "link": pub["Link"],
             "source": "BioC API" if used_api else "PDF",
             "summary": summary,
-            "text_preview": text[:2000]
+            "text_preview": text[:2000]  # first 2000 chars
         }
 
         with open(cache_file, "w", encoding="utf-8") as f:

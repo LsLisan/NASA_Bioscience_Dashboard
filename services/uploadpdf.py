@@ -2,7 +2,6 @@ from pathlib import Path
 from services.pdf_processor import PDFProcessor
 from services.ai_analyzer import AIAnalyzer
 
-
 class UploadPDFService:
     def __init__(self, upload_dir="data/uploads"):
         self.upload_dir = Path(upload_dir)
@@ -13,8 +12,8 @@ class UploadPDFService:
 
     def handle_upload(self, pdf_file) -> dict:
         """
-        Save uploaded file, extract text, summarize with AI.
-        Returns dict {summary, text_preview}.
+        Save uploaded PDF, extract text, summarize with AI.
+        Returns dict: {summary, text_preview}.
         """
         if not pdf_file or pdf_file.filename == "":
             raise ValueError("No file uploaded")
@@ -31,5 +30,5 @@ class UploadPDFService:
 
         return {
             "summary": summary,
-            "text_preview": text[:2000]
+            "text_preview": text[:2000]  # first 2000 characters as preview
         }

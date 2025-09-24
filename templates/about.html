@@ -1,0 +1,471 @@
+{% extends "base.html" %} {% block title %}About Us - Lumiverse Team{% endblock %} {% block extra_css %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    .about-body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .header {
+        text-align: center;
+        margin-bottom: 4rem;
+        color: white;
+    }
+    
+    .header h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header p {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+    
+    .member-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 0;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        min-height: 520px;
+        max-width: 384px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .member-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: all 0.5s ease;
+    }
+    
+    .member-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 40%;
+        background: linear-gradient(to top, rgba(255, 255, 255, 0.3), transparent);
+        backdrop-filter: blur(10px);
+        pointer-events: none;
+    }
+    
+    .member-card:hover::before {
+        left: 100%;
+    }
+    
+    .member-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+    }
+    
+    .profile-image {
+        width: 100%;
+        height: 370px;
+        border-radius: 20px 20px 0 0;
+        margin: 0;
+        border: none;
+        transition: all 0.3s ease;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        font-size: 4rem;
+        color: white;
+        font-weight: bold;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        border-radius: 20px 20px 0 0;
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .member-card:hover .profile-image {
+        border-color: #764ba2;
+        transform: scale(1.05);
+    }
+    
+    .card-content {
+        padding: 2rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .member-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .member-role {
+        font-size: 1.1rem;
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .member-bio {
+        font-size: 0.95rem;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+    
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .social-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .social-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        transform: translate(-50%, -50%);
+    }
+    
+    .social-btn:hover::before {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .social-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .linkedin {
+        background: linear-gradient(45deg, #0077b5, #005885);
+    }
+    
+    .github {
+        background: linear-gradient(45deg, #333, #000);
+    }
+    
+    .portfolio {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+    }
+    
+    @media (max-width: 768px) {
+        .header h1 {
+            font-size: 2.5rem;
+        }
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+        .container {
+            padding: 0 1rem;
+        }
+    }
+    
+    .floating-elements {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+    }
+    
+    .floating-element {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(180deg);
+        }
+    }
+</style>
+{% endblock %} {% block content %}
+<div class="about-body">
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="width: 60px; height: 60px; top: 20%; right: 15%; animation-delay: 2s;"></div>
+        <div class="floating-element" style="width: 100px; height: 100px; bottom: 20%; left: 20%; animation-delay: 4s;"></div>
+        <div class="floating-element" style="width: 70px; height: 70px; bottom: 30%; right: 25%; animation-delay: 1s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Meet Team Lumiverse</h1>
+            <p>We're a passionate team of innovators, creators, and problem-solvers dedicated to bringing bright ideas to life through cutting-edge technology and collaborative excellence.</p>
+        </div>
+
+
+
+        <div class="team-grid">
+            <!-- Team Member 1 -->
+            <div class="member-card">
+                <div class="profile-image"><img src="{{ url_for('static', filename='assets/ar.png') }}" alt="Profile Image" width=384px height=512px></div>
+                <div class="card-content">
+                    <h3 class="member-name">Adnan Rahman Sayeem</h3>
+                    <p class="member-role">Team Leader</p>
+                    <p class="member-bio">Researcher</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/adnan-rahman-sayeem/" class="social-btn linkedin" title="LinkedIn">
+                            <span>in</span>
+                        </a>
+                        <a href="#" class="social-btn github" title="GitHub">
+                            <span>git</span>
+                        </a>
+                        <a href="mailto:sumaiya@example.com" class="social-btn email" title="Email">
+                            <span>📧</span>
+                        </a>
+                        <a href="#" class="social-btn portfolio" title="Portfolio">
+                            <span>🌐</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="member-card">
+                <div class="profile-image"><img src="{{ url_for('static', filename='assets/rin.png') }}" alt="Profile Image" width=384px height=512px></div>
+                <div class="card-content">
+                    <h3 class="member-name">Sumaiya Amrin</h3>
+                    <p class="member-role">Developer</p>
+                    <p class="member-bio">Creative designer focused on user-centered design principles. Specializes in creating intuitive interfaces that bridge the gap between functionality and aesthetics.</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/sumaiya-amrin-3b2157283/" class="social-btn linkedin" title="LinkedIn">
+                            <span>in</span>
+                        </a>
+                        <a href="https://github.com/Amrin-Sumaiya" class="social-btn github" title="GitHub">
+                            <span>git</span>
+                        </a>
+                        <a href="mailto:sumaiyaamrin6@gmail.com" class="social-btn email" title="Email">
+                            <span>📧</span>
+                        </a>
+                        <a href="#" class="social-btn portfolio" title="Portfolio">
+                            <span>🌐</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="member-card">
+                <div class="profile-image"><img src="{{ url_for('static', filename='assets/ls.png') }}" alt="Profile Image" width=384px height=512px></div>
+                <div class="card-content">
+                    <h3 class="member-name">MD. Lisan Islam</h3>
+                    <p class="member-role">Researcher</p>
+                    <p class="member-bio">Backend specialist with expertise in AI and database optimization. Loves solving complex problems and building robust systems.</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/lslisan/" class="social-btn linkedin" title="LinkedIn">
+                            <span>in</span>
+                        </a>
+                        <a href="https://github.com/LsLisan" class="social-btn github" title="GitHub">
+                            <span>git</span>
+                        </a>
+                        <a href="https://lslisan.github.io/Portfolio/" class="social-btn portfolio" title="Portfolio">
+                            <span>🌐</span>
+                        </a>
+                        <a href="mailto:mdlisan36@gmail.com" class="social-btn email" title="Email">
+                            <span>📧</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 4 -->
+            <div class="member-card">
+                <div class="profile-image">
+                    <img src="{{ url_for('static', filename='assets/nbr.png') }}" alt="Profile Image" width=384px height=512px>
+                </div>
+                <div class="card-content">
+                    <h3 class="member-name">Nafis Bin Rahman</h3>
+                    <p class="member-role">Video Editor</p>
+                    <p class="member-bio">Experienced project manager who ensures smooth delivery and client satisfaction. Expert in agile methodologies and team coordination.</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/nafis-bin-rahman/" class="social-btn linkedin" title="LinkedIn">
+                            <span>in</span>
+                        </a>
+                        <a href="https://github.com/nafisbinrahman" class="social-btn github" title="GitHub">
+                            <span>git</span>
+                        </a>
+                        <a href="mailto:nafisbinrahman@gmail.com" class="social-btn email" title="Email">
+                            <span>📧</span>
+                        </a>
+                        <a href="#" class="social-btn portfolio" title="Portfolio">
+                            <span>🌐</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 5 -->
+            <div class="member-card">
+                <div class="profile-image"><img src="{{ url_for('static', filename='assets/msq.png') }}" alt="Profile Image" width=384px height=512px></div>
+                <div class="card-content">
+                    <h3 class="member-name">Md. Musfiqur Rahman</h3>
+                    <p class="member-role">Prototype Designer</p>
+                    <p class="member-bio">Creative designer focused on user-centered design principles. Specializes in creating intuitive interfaces that bridge the gap between functionality and aesthetics.</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/md-musfiqur-rahman-1b2a2b2a2/" class="social-btn linkedin" title="LinkedIn">
+                            <span>in</span>
+                        </a>
+                        <a href="https://github.com/zihadi009" class="social-btn github" title="GitHub">
+                            <span>git</span>
+                        </a>
+                        <a href="mailto:musfiqur15-4641@diu.edu.bd" class="social-btn email" title="Email">
+                            <span>📧</span>
+                        </a>
+                        <a href="#" class="social-btn portfolio" title="Portfolio">
+                            <span>🌐</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+    // Add smooth scrolling and interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.member-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            observer.observe(card);
+        });
+
+        // Add click effects to social buttons
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.style.animation = 'pulse 0.3s ease';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 300);
+
+                // In a real implementation, you would replace these with actual URLs
+                const platform = this.classList.contains('linkedin') ? 'LinkedIn' :
+                    this.classList.contains('github') ? 'GitHub' : 'Portfolio';
+                alert(`This would open the ${platform} profile. Replace href="# " with actual URLs.`);
+            });
+        });
+
+        // Add floating animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.1); }
+                    100% { transform: scale(1); }
+                }
+            `;
+        document.head.appendChild(style);
+    });
+
+    // Add parallax effect to floating elements
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const parallax = document.querySelectorAll('.floating-element');
+        const speed = 0.5;
+
+        parallax.forEach(element => {
+            const yPos = -(scrolled * speed);
+            element.style.transform = `translateY(${yPos}px)`;
+        });
+    });
+</script>
+{% endblock %}

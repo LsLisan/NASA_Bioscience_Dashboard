@@ -1,12 +1,13 @@
-/* NASA Bioscience Explorer - Main Styles */
+/* NASA Bioscience Explorer - Enhanced Styles with Space Animations */
 
 :root {
-    --primary-color: #0d6efd;
+    --primary-color: #0b3d91;
     --secondary-color: #6c757d;
     --success-color: #198754;
     --info-color: #0dcaf0;
     --warning-color: #ffc107;
     --danger-color: #dc3545;
+    --space-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
 }
 
 
@@ -16,30 +17,351 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 
 /* Navigation */
 
+.navbar {
+    background: var(--primary-color) !important;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+}
+
 .navbar-brand {
     font-weight: 600;
     font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin: 0 5px;
+}
+
+.navbar-nav .nav-link:hover {
+    transform: translateY(-2px);
+    color: #fff !important;
 }
 
 
-/* Search Input */
+/* Title Section */
 
-.form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+.tittle {
+    background: var(--space-gradient);
+    color: white;
+    padding: 60px 0 40px;
+    text-align: center;
 }
 
-.input-group-lg .form-control {
-    border-radius: 0.5rem 0 0 0.5rem;
+.tittle h1 {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.input-group-lg .btn {
-    border-radius: 0 0.5rem 0.5rem 0;
+
+/* Search Area */
+
+.search-area {
+    background: var(--space-gradient);
+    padding: 40px 20px 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 2px solid #ffffff;
+    border-radius: 50px;
+    overflow: hidden;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.search-box input {
+    flex: 1;
+    padding: 15px 25px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+    color: #333;
+}
+
+.search-box input::placeholder {
+    color: #666;
+}
+
+.search-box button {
+    padding: 15px 30px;
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.search-box button:hover {
+    background: #ffffff;
+    color: var(--primary-color);
+    transform: translateX(-3px);
+}
+
+
+/* Space Illustration */
+
+.illustration.space-bg {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    background: linear-gradient(45deg, #0c0c0c, #1a1a2e, #16213e);
+    border-radius: 20px;
+    margin: 40px auto;
+    overflow: hidden;
+    max-width: 800px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+
+/* Stars Animation */
+
+.stars,
+.stars2,
+.stars3 {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: transparent;
+}
+
+.stars::before,
+.stars2::before,
+.stars3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent), radial-gradient(2px 2px at 40px 70px, white, transparent), radial-gradient(1px 1px at 90px 40px, #eee, transparent), radial-gradient(1px 1px at 130px 80px, white, transparent), radial-gradient(2px 2px at 160px 30px, #eee, transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+.stars {
+    animation: moveStars 60s linear infinite;
+}
+
+.stars2 {
+    animation: moveStars 120s linear infinite;
+    opacity: 0.5;
+}
+
+.stars3 {
+    animation: moveStars 180s linear infinite;
+    opacity: 0.3;
+}
+
+
+/* Rocket Animation */
+
+.rocket {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 50px;
+    animation: launch 8s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+
+/* Astronaut Floating */
+
+.astronaut {
+    position: absolute;
+    font-size: 45px;
+    animation: floatAstronaut 6s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+}
+
+.astronaut:nth-child(2) {
+    animation-delay: -2s;
+}
+
+.astronaut:nth-child(3) {
+    animation-delay: -4s;
+}
+
+
+/* Biology Icons (replacing trees) */
+
+.tree {
+    position: absolute;
+    bottom: 20px;
+    font-size: 35px;
+    animation: sway 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
+}
+
+.tree:nth-child(6) {
+    animation-delay: -1s;
+}
+
+.tree:nth-child(7) {
+    animation-delay: -2s;
+}
+
+.tree:nth-child(8) {
+    animation-delay: -0.5s;
+}
+
+
+/* Quick Search Section */
+
+.quick-search-section {
+    margin-top: 40px;
+}
+
+.quick-search-section h5 {
+    color: white;
+    font-weight: 500;
+}
+
+.quick-search {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    margin: 5px;
+}
+
+.quick-search:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+
+/* Features Section */
+
+.features-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.feature-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.feature-card h5 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+
+/* Publication Cards (preserved from original) */
+
+.publication-card {
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.publication-card:hover {
+    border-left-color: var(--primary-color);
+    background-color: #f8f9fa;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.publication-title {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    line-height: 1.4;
+    display: block;
+    transition: color 0.2s ease;
+}
+
+.publication-title:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+
+/* Search Suggestions */
+
+#suggestions {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.suggestion-item {
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    color: #333;
+}
+
+.suggestion-item:hover {
+    background: rgba(11, 61, 145, 0.1);
+    color: var(--primary-color);
 }
 
 
@@ -75,75 +397,6 @@ body {
     background-color: #0b5ed7;
     border-color: #0a58ca;
     transform: translateY(-1px);
-}
-
-.quick-search {
-    transition: all 0.2s ease;
-}
-
-.quick-search:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-
-/* Feature Icons */
-
-.feature-icon {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-/* Publication Cards */
-
-.publication-card {
-    border-left: 4px solid transparent;
-    transition: all 0.3s ease;
-}
-
-.publication-card:hover {
-    border-left-color: var(--primary-color);
-    background-color: #f8f9fa;
-}
-
-.publication-title {
-    color: #333;
-    text-decoration: none;
-    font-weight: 500;
-    line-height: 1.4;
-    display: block;
-    transition: color 0.2s ease;
-}
-
-.publication-title:hover {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-
-/* Search Suggestions */
-
-#suggestions {
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin-top: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.suggestion-item {
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    transition: background-color 0.2s ease;
-}
-
-.suggestion-item:hover {
-    background-color: #f8f9fa;
 }
 
 
@@ -193,47 +446,87 @@ body {
 }
 
 
-/* Responsive Design */
+/* Footer */
 
-@media (max-width: 768px) {
-    .display-4 {
-        font-size: 2rem;
-    }
-    .input-group-lg .form-control {
-        font-size: 1rem;
-    }
-    .publication-card .row {
-        flex-direction: column;
-    }
-    .publication-card .col-md-2 {
-        margin-top: 1rem;
-        text-align: left !important;
-    }
-    .quick-search {
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
-    }
+.footer {
+    background: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 40px 0;
+    margin-top: 0;
 }
 
-@media (max-width: 576px) {
-    .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    .card-body {
-        padding: 1rem;
-    }
-    .pagination {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    .pagination .page-item {
-        margin: 0.125rem;
-    }
+.footer p {
+    margin-bottom: 5px;
 }
 
 
 /* Animations */
+
+@keyframes twinkle {
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes moveStars {
+    from {
+        transform: translate(0, 0);
+    }
+    to {
+        transform: translate(-100px, 100px);
+    }
+}
+
+@keyframes launch {
+    0% {
+        bottom: -50px;
+        opacity: 0.8;
+    }
+    25% {
+        bottom: 150px;
+        opacity: 1;
+    }
+    50% {
+        bottom: 280px;
+        opacity: 1;
+    }
+    75% {
+        bottom: 150px;
+        opacity: 1;
+    }
+    100% {
+        bottom: -50px;
+        opacity: 0.8;
+    }
+}
+
+@keyframes floatAstronaut {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-5deg);
+    }
+    50% {
+        transform: translateY(-30px) rotate(5deg);
+    }
+}
+
+@keyframes sway {
+    0%,
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(5deg) scale(1.1);
+    }
+}
+
+
+/* Fade In Animation */
 
 @keyframes fadeIn {
     from {
@@ -251,7 +544,7 @@ body {
 }
 
 
-/* Loading Animation */
+/* Pulse Animation */
 
 @keyframes pulse {
     0% {
@@ -277,4 +570,84 @@ body {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .tittle h1 {
+        font-size: 2.5rem;
+    }
+    .search-box {
+        max-width: 90%;
+    }
+    .search-box input {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    .search-box button {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    .illustration.space-bg {
+        height: 250px;
+        margin: 30px auto;
+    }
+    .rocket {
+        font-size: 35px;
+    }
+    .astronaut {
+        font-size: 30px;
+    }
+    .tree {
+        font-size: 25px;
+    }
+    .feature-card {
+        margin-bottom: 30px;
+        padding: 30px 20px;
+    }
+    .quick-search {
+        font-size: 0.8rem;
+        margin: 3px;
+    }
+    .publication-card .row {
+        flex-direction: column;
+    }
+    .publication-card .col-md-2 {
+        margin-top: 1rem;
+        text-align: left !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .tittle h1 {
+        font-size: 2rem;
+    }
+    .search-area {
+        padding: 30px 10px 60px;
+    }
+    .features-section {
+        padding: 50px 0;
+    }
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    .navbar-logo {
+        height: 30px;
+    }
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .card-body {
+        padding: 1rem;
+    }
+    .pagination {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .pagination .page-item {
+        margin: 0.125rem;
+    }
 }
