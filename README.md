@@ -26,7 +26,7 @@ NASA Bioscience Publications Explorer is a Flask-based web dashboard for searchi
 
 ### PDF Upload & AI Summary
 ![PDF Upload](readmeAsset/explorePDFupload.png)
-*Upload your own PDF to receive an instant AI-generated summary and preview of the document's main findings.*
+*Upload your downloaded publication's PDF to receive an instant AI-generated summary and preview of the document's main findings.*
 
 ![AI Summary](readmeAsset/exploreAISummary.png)
 *Shows the AI-powered summary of the uploaded or selected publication, making complex research easy to understand.*
@@ -36,7 +36,7 @@ NASA Bioscience Publications Explorer is a Flask-based web dashboard for searchi
 
 ### About/Team Page
 ![About Team](readmeAsset/about.png)
-*Meet the Lumiverse team, learn about their roles, and find links to their professional profiles.*
+*We are team Lumiverse and this is our team information.*
 
 
 ## Project Structure
