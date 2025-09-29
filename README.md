@@ -12,25 +12,31 @@ NASA Bioscience Publications Explorer is a Flask-based web dashboard for searchi
 - **AI Summaries:** Get concise summaries and previews of research papers.
 - **PDF Upload:** Upload your own PDF to generate a summary and preview.
 - **Publication Details:** View metadata and links to original publications.
-- **Team Page:** Meet the Lumiverse team with bios and social links.
+- **About Page:** Meet the Lumiverse team with bios and social links.
 - **Responsive Design:** Works well on desktop and mobile.
 
 ## Project UI
 ### Home/Search Page
 ![Home/Search](readmeAsset/home.png)
+*The landing page provides a search bar for quick access to NASA bioscience publications and highlights key features of the dashboard.*
 
 ### Search Results
 ![Search Results](readmeAsset/searchResult.png)
+*Displays a list of publications matching your search query, with metadata and quick links to details and downloads.*
 
 ### PDF Upload & AI Summary
 ![PDF Upload](readmeAsset/explorePDFupload.png)
-![AI Summary](readmeAsset/exploreAISummary.png)
+*Upload your own PDF to receive an instant AI-generated summary and preview of the document's main findings.*
 
-### Extracted Preview
+![AI Summary](readmeAsset/exploreAISummary.png)
+*Shows the AI-powered summary of the uploaded or selected publication, making complex research easy to understand.*
+
 ![Publication Details](readmeAsset/exploreExtractPreview.png)
+*View extracted text and metadata from the publication, including experiment details and links to the original source.*
 
 ### About/Team Page
 ![About Team](readmeAsset/about.png)
+*Meet the Lumiverse team, learn about their roles, and find links to their professional profiles.*
 
 
 ## Project Structure
@@ -106,4 +112,6 @@ Meet the Lumiverse Team:
 | MD. Lisan Islam        | Researcher          | [LinkedIn](https://www.linkedin.com/in/lslisan/)      | [GitHub](https://github.com/LsLisan)        | mdlisan36@gmail.com          |
 | MD. TANVIRUL HOQUE     | Video Editor        | [LinkedIn](https://www.linkedin.com/in/nafis-bin-rahman/) | [GitHub](https://github.com/nafisbinrahman) | nafisbinrahman@gmail.com     |
 | Md. Musfiqur Rahman    | Prototype Designer  | [LinkedIn](https://www.linkedin.com/in/md-musfiqur-rahman-1b2a2b2a2/) | [GitHub](https://github.com/zihadi009)      | musfiqur15-4641@diu.edu.bd   |
+
+**All rights reserved to Lumiverse.**
 
